@@ -68,7 +68,7 @@ This single repo contains **both frontend and backend codebases**.
 
 ## 1️⃣ Clone the Repository
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/VartikaBaliyan08/GUHMS
 cd GUHMS
 ```
 
