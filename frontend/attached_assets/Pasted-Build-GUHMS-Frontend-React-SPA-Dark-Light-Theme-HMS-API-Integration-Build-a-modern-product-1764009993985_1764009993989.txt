@@ -1,0 +1,553 @@
+Build GUHMS Frontend – React SPA + Dark/Light Theme + HMS API Integration
+
+Build a modern, production-ready single-page frontend for a Hospital Management System called “GUHMS” (Global Unified Hospital Management System).
+The backend is a Java Spring Boot API running at:
+Base URL: http://localhost:8080
+Use the exact endpoints and payloads defined below.
+The app must support Admin, Doctor, and Patient roles with separate dashboards, dark & light themes, navbar, footer, and smooth animations.
+
+🧱 Tech Stack & Architecture
+
+Framework: React (SPA) with TypeScript
+
+Routing: React Router (role-based routing & protected routes)
+
+Styling: Tailwind CSS (or similar) with full dark & light theme support
+
+Animations: Framer Motion (or similar) for page transitions, modals, hover effects
+
+State / Data: React Query / Redux Toolkit / Zustand (any modern option)
+
+HTTP: Axios or Fetch with a centralized API client
+
+Icons: Lucide / Heroicons / Material Icons
+
+Images: Use high-quality medical images & illustrations (doctors, patients, hospital scenes, stethoscopes, dashboards) from royalty-free sources
+
+🎨 Theming, Layout, Navbar & Footer
+Dark & Light Theme
+
+Implement a global theme system:
+
+Light theme:
+
+Background: soft white / light gray
+
+Text: dark gray
+
+Cards: white with shadows
+
+Accents: teal / medical blue
+
+Dark theme:
+
+Background: dark slate / navy
+
+Cards: deep gray with subtle borders/glow
+
+Text: off-white
+
+Accents: cyan/teal or purple
+
+Requirements:
+
+Theme toggle (sun/moon) in the navbar
+
+Smooth animated transition when switching themes
+
+Persist theme (e.g., localStorage) so reload keeps chosen theme
+
+All components (navbar, footer, dashboards, tables, modals) respect theme
+
+Navbar (Global)
+
+Fixed at top for all main pages
+
+Shows:
+
+GUHMS logo/wordmark
+
+Public links (before login): Home, Features, Contact, Login, Register
+
+After login: role-specific nav (Admin, Doctor, Patient)
+
+Theme toggle (dark/light)
+
+Logged-in user avatar + dropdown (Profile, Logout)
+
+Use glassmorphism / blur + shadow + hover effects
+
+Footer (Global)
+
+Always at the bottom of the page (or content)
+
+Includes:
+
+“GUHMS – Global Unified Hospital Management System”
+
+Copyright
+
+Links: Terms, Privacy, Help
+
+Note: “Made with care for hospitals & patients”
+
+Respects dark/light theme
+
+🏠 Public Pages
+Landing Page
+
+Hero section with:
+
+Medical illustration/image (doctor & patient, hospital UI, etc.)
+
+Title: “GUHMS – Global Unified Hospital Management System”
+
+Subtitle explaining benefits
+
+Call-to-action buttons: “Login”, “Register as Patient”
+
+Feature sections describing:
+
+Admin Dashboard
+
+Doctor Portal
+
+Patient Portal
+
+Smooth scroll + fade-in animations
+
+Auth Pages
+Login (uses /auth/login)
+
+Centered card with:
+
+Email
+
+Password
+
+Validation + error messages
+
+On success:
+
+Save token
+
+Redirect to dashboard based on role in response
+
+Endpoint:
+
+POST /auth/login
+Request:
+
+{ "email": "admin@hms.com", "password": "Admin@123" }
+
+
+Response:
+
+{ "token": "...", "id": "...", "name": "...", "role": "ADMIN|DOCTOR|PATIENT" }
+
+Patient Signup (uses /auth/signup-patient)
+
+Form fields:
+
+name, email, password, age, gender, contactInfo
+
+Animated progress/loading
+
+On success: treat like login, store token, redirect to patient dashboard
+
+Endpoint:
+
+POST /auth/signup-patient
+Request:
+
+{
+  "name": "John Doe",
+  "email": "john@hms.com",
+  "password": "Pass@123",
+  "age": 28,
+  "gender": "M",
+  "contactInfo": "1234567890"
+}
+
+
+Response: same shape as login.
+
+🔐 JWT & Headers (Frontend Behavior)
+
+After login/signup:
+
+Store JWT token (e.g. in memory + localStorage)
+
+All protected calls must include:
+
+Authorization: Bearer <token>
+
+Handle errors:
+
+400 → show validation error
+
+403 → “You don’t have permission”
+
+409 → conflict (e.g. slot unavailable, email exists)
+
+🧭 Role-based Dashboards
+1️⃣ Admin Dashboard (role: ADMIN)
+
+Main Endpoints:
+
+Doctors:
+
+POST /admin/doctors
+
+GET /admin/doctors
+
+GET /admin/doctors/{id}
+
+PUT /admin/doctors/{id}
+
+DELETE /admin/doctors/{id}
+
+Patients:
+
+GET /admin/patients
+
+GET /admin/patients/{id}
+
+PUT /admin/patients/{id}
+
+DELETE /admin/patients/{id}
+
+Payloads:
+
+POST /admin/doctors Request:
+
+{
+  "name": "Dr. Smith",
+  "email": "drsmith@hms.com",
+  "password": "Dr@12345",
+  "specialization": "Cardiology",
+  "experienceYears": 10,
+  "slotDuration": 30,
+  "workingHours": [
+    { "day": "MONDAY", "startTime": "09:00", "endTime": "12:00" },
+    { "day": "MONDAY", "startTime": "13:00", "endTime": "17:00" },
+    { "day": "TUESDAY", "startTime": "09:00", "endTime": "12:00" },
+    { "day": "TUESDAY", "startTime": "13:00", "endTime": "17:00" }
+  ]
+}
+
+
+PUT /admin/doctors/{id} Request:
+Partial update, e.g.:
+
+{
+  "specialization": "Neurology",
+  "experienceYears": 12,
+  "slotDuration": 20
+}
+
+
+PUT /admin/patients/{id} Request:
+
+{
+  "age": 30,
+  "gender": "F",
+  "contactInfo": "9876543210"
+}
+
+
+UI:
+
+Overview cards (animated counters):
+
+Number of doctors
+
+Number of patients
+
+Today’s appointments
+
+Doctor Management page:
+
+Table with search/sort
+
+“Add Doctor” modal using /admin/doctors
+
+Edit/Delete actions
+
+Patient Management page:
+
+Table with search/sort
+
+Edit/Delete actions
+
+Use charts (e.g., Recharts) for:
+
+Appointments per day
+
+Doctor specialization distribution
+
+All styled with dark/light theme & nice animations.
+
+2️⃣ Doctor Dashboard (role: DOCTOR)
+
+Key Concepts:
+
+ISO-8601 UTC times (e.g., 2025-12-01T09:00:00Z)
+
+Default slot duration: 30 minutes (but can vary)
+
+Appointment statuses:
+PENDING, ACCEPTED, REJECTED, VISITED, CANCELLED, RESCHEDULE_PROPOSED, RESCHEDULE_PENDING_PATIENT
+
+Endpoints:
+
+GET /doctor/appointments?date=YYYY-MM-DD
+
+PUT /doctor/appointments/{id}/accept
+
+PUT /doctor/appointments/{id}/reject
+
+PUT /doctor/appointments/{id}/accept-keep-time (resolve double booking)
+
+PUT /doctor/appointments/{id}/visited
+
+PUT /doctor/appointments/{id}/extend
+
+POST /doctor/appointments/{id}/prescription
+
+GET /doctor/patients/{patientId}/history
+
+Payloads:
+
+PUT /doctor/appointments/{id}/visited Request:
+
+{
+  "actualStartTime": "2025-12-01T09:00:00Z",
+  "actualEndTime": "2025-12-01T09:40:00Z"
+}
+
+
+PUT /doctor/appointments/{id}/extend Request:
+
+{ "extraMinutes": 10 }
+
+
+POST /doctor/appointments/{id}/prescription Request:
+
+{
+  "medications": [
+    {
+      "name": "MedA",
+      "dosage": "50mg",
+      "frequency": "BID",
+      "duration": "5d",
+      "notes": "after food"
+    }
+  ],
+  "notes": "Rest and hydrate"
+}
+
+
+UI:
+
+Doctor Dashboard:
+
+Today’s appointments in a timeline or list of cards
+
+Each card shows: patient, time, status, reason
+
+Actions:
+
+Accept / Reject
+
+Mark Visited
+
+Extend
+
+Visual tags for statuses; highlight RESCHEDULE_PENDING_PATIENT and RESCHEDULE_PROPOSED
+
+Double Booking Scenario:
+
+If two appointments exist at the same time:
+
+Surface a conflict indicator
+
+Let doctor choose which appointment to keep original time (PUT /doctor/appointments/{id}/accept-keep-time)
+
+Automatically, other overlapping PENDING appointments receive proposed new slot (status RESCHEDULE_PENDING_PATIENT)
+
+Prescription UI:
+
+In an appointment details modal/drawer, allow writing prescriptions via /doctor/appointments/{id}/prescription
+
+Show previous prescriptions & visits:
+
+GET /doctor/patients/{patientId}/history
+
+3️⃣ Patient Dashboard (role: PATIENT)
+
+Endpoints:
+
+GET /patient/doctors
+
+GET /patient/doctors/{id}
+
+GET /patient/doctors/{id}/slots?date=YYYY-MM-DD
+
+POST /patient/appointments
+
+GET /patient/appointments
+
+GET /patient/appointments/history
+
+GET /patient/prescriptions
+
+GET /patient/prescriptions/{id}
+
+PUT /patient/appointments/{id}/accept-reschedule
+
+PUT /patient/appointments/{id}/reject-reschedule
+
+Payloads:
+
+GET /patient/doctors/{id}/slots?date=YYYY-MM-DD
+Response:
+
+[
+  "2025-12-01T09:00:00Z",
+  "2025-12-01T09:30:00Z",
+  "2025-12-01T10:00:00Z"
+]
+
+
+POST /patient/appointments Request:
+
+{
+  "doctorId": "<doctorId>",
+  "slotStartTime": "2025-12-01T09:00:00Z",
+  "reason": "General checkup"
+}
+
+
+Response: Appointment with status: PENDING.
+
+PUT /patient/appointments/{id}/accept-reschedule
+
+PUT /patient/appointments/{id}/reject-reschedule
+Response: updated appointment (ACCEPTED or CANCELLED).
+
+UI:
+
+Dashboard:
+
+Greeting: “Hi, [Name], welcome to GUHMS 👋”
+
+Cards for:
+
+Next appointment
+
+Pending reschedules
+
+Latest prescriptions
+
+Mini calendar with appointment markers
+
+Book Appointment Flow:
+
+Doctor list (GET /patient/doctors):
+
+Cards with doctor name, specialization, experience
+
+Doctor detail & slots page (GET /patient/doctors/{id}/slots?date=…):
+
+Grid/calendar of available slots
+
+Click slot → Confirm modal → POST /patient/appointments
+
+Appointments page:
+
+Show upcoming (PENDING, ACCEPTED)
+
+History tab for past visits
+
+Reschedule Handling:
+
+If appointment status is RESCHEDULE_PENDING_PATIENT:
+
+Show original time (strikethrough)
+
+Show proposed new time
+
+Buttons:
+
+“Accept new time” → /patient/appointments/{id}/accept-reschedule
+
+“Reject” → /patient/appointments/{id}/reject-reschedule
+
+Use toasts and animations on success
+
+Prescriptions:
+
+GET /patient/prescriptions → list with date, doctor, summary
+
+GET /patient/prescriptions/{id} → full detail (modal or page)
+
+🧮 Time, Slots & Status Handling (Frontend)
+
+All times from backend are ISO-8601 UTC:
+
+Example: "2025-12-01T09:00:00Z"
+
+Frontend should:
+
+Convert to local timezone for display
+
+Format times nicely (e.g., “Dec 1, 2025 – 2:30 PM”)
+
+Represent appointment statuses with:
+
+Color-coded chips
+
+Clear icons
+
+Tooltips (e.g., RESCHEDULE_PENDING_PATIENT → “Awaiting your response to new time”)
+
+🎬 Animations & UX Polish
+
+Page transitions with Framer Motion
+
+Hover + tap animations on cards and CTAs
+
+Skeleton loaders while fetching
+
+Toast notifications for:
+
+Login success/failure
+
+Appointment created
+
+Reschedule accepted/rejected
+
+Prescription saved
+
+Smooth dark/light switch with subtle fade
+
+✅ Final Objective
+
+Create a fully functional, beautiful, dark+light themed, role-based SPA frontend for GUHMS that:
+
+Uses http://localhost:8080 and the exact endpoints & payloads listed above
+
+Implements:
+
+Auth (login, patient signup) with JWT header
+
+Three role dashboards (Admin, Doctor, Patient)
+
+Doctor slot booking, double-booking conflict handling, rescheduling flows
+
+Prescriptions creation & viewing
+
+Includes a global navbar, footer, and high-quality medical imagery
+
+Delivers a polished, production-quality UX.
